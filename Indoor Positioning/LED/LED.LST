@@ -1,0 +1,61 @@
+C51 COMPILER V9.02   LED                                                                   02/28/2020 11:30:53 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN LED.OBJ
+COMPILER INVOKED BY: D:\XX\keil\C51\BIN\C51.EXE LED.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          #include<intrins.h>
+   3          
+   4          sbit LED1 = P1^0;
+   5          sbit LED2 = P1^1;
+   6          sbit LED3 = P1^2;
+   7          
+   8          unsigned char temp;
+   9          
+  10          void init();
+  11          void Led_flash();
+  12          
+  13          void main ()
+  14          {
+  15   1              init();
+  16   1              while(1);       
+  17   1      }
+  18          
+  19          void Led_flash() interrupt 1
+  20          {
+  21   1              TH0 = (65536 - 1000) / 256;
+  22   1              TL0 = (65535 - 1000) % 256;
+  23   1              temp = _crol_(temp,1);
+  24   1              if(temp == 0x08)
+  25   1                      temp = 0x01;
+  26   1              P1 = temp;
+  27   1      }
+  28          
+  29          void init()
+  30          {
+  31   1              TMOD = 0x01;
+  32   1              TH0 = (65536 - 1000) / 256;
+  33   1              TL0 = (65535 - 1000) % 256;
+  34   1              EA = 1;
+  35   1              ET0 = 1;
+  36   1              TR0 = 1;
+  37   1              temp = 0x01;
+  38   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     72    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
