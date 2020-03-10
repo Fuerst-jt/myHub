@@ -1,9 +1,9 @@
-C51 COMPILER V9.02   STC_BH1750                                                            03/01/2020 12:22:30 PAGE 1   
+C51 COMPILER V9.59.0.0   STC_BH1750                                                        03/08/2020 16:06:35 PAGE 1   
 
 
-C51 COMPILER V9.02, COMPILATION OF MODULE STC_BH1750
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE STC_BH1750
 OBJECT MODULE PLACED IN STC_BH1750.OBJ
-COMPILER INVOKED BY: D:\XX\keil\C51\BIN\C51.EXE STC_BH1750.c BROWSE DEBUG OBJECTEXTEND
+COMPILER INVOKED BY: D:\XX\MDK\C51\BIN\C51.EXE STC_BH1750.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
 
 line level    source
 
@@ -16,17 +16,17 @@ line level    source
    7          // 参考宏晶网站24c04通信程序
    8          // 时间：2011年4月20日
    9          //****************************************
-  10          #include  <REG51.H>     
+  10          #include  <REG51.H> 
   11          #include  <math.h>    //Keil library  
-  12          #include  <stdio.h>   //Keil library    
+  12          #include  <stdio.h>   //Keil library  
   13          #include  <INTRINS.H>
   14          #define   uchar unsigned char
-  15          #define   uint unsigned int     
-  16          #define   DataPort P0    //LCD1602数据端口
-  17          sbit      SCL=P1^0;      //IIC时钟引脚定义
+  15          #define   uint unsigned int 
+  16          #define   DataPort P0  //LCD1602数据端口
+  17          sbit    SCL=P1^0;      //IIC时钟引脚定义
   18          sbit      SDA=P1^1;      //IIC数据引脚定义
-  19          sbit      LCM_RS=P2^0;   //LCD1602命令端口              
-  20          sbit      LCM_RW=P2^1;   //LCD1602命令端口              
+  19          sbit      LCM_RS=P2^0;   //LCD1602命令端口    
+  20          sbit      LCM_RW=P2^1;   //LCD1602命令端口    
   21          sbit      LCM_EN=P2^2;   //LCD1602命令端口 
   22          
   23          #define   SlaveAddress   0x46 //定义器件在IIC总线中的从地址,根据ALT  ADDRESS地址引脚不同修改
@@ -62,14 +62,14 @@ line level    source
   53          
   54          //-----------------------------------
   55          
-C51 COMPILER V9.02   STC_BH1750                                                            03/01/2020 12:22:30 PAGE 2   
+C51 COMPILER V9.59.0.0   STC_BH1750                                                        03/08/2020 16:06:35 PAGE 2   
 
   56          //*********************************************************
   57          void conversion(uint temp_data)  //  数据转换出 个，十，百，千，万
   58          {  
   59   1          wan=temp_data/10000+0x30 ;
   60   1          temp_data=temp_data%10000;   //取余运算
-  61   1              qian=temp_data/1000+0x30 ;
+  61   1        qian=temp_data/1000+0x30 ;
   62   1          temp_data=temp_data%1000;    //取余运算
   63   1          bai=temp_data/100+0x30   ;
   64   1          temp_data=temp_data%100;     //取余运算
@@ -80,60 +80,60 @@ line level    source
   69          
   70          //毫秒延时**************************
   71          void delay_nms(unsigned int k)  
-  72          {                                               
-  73   1      unsigned int i,j;                               
+  72          {           
+  73   1      unsigned int i,j;       
   74   1      for(i=0;i<k;i++)
-  75   1      {                       
-  76   2      for(j=0;j<121;j++)                      
-  77   2      {;}}                                            
+  75   1      {     
+  76   2      for(j=0;j<121;j++)      
+  77   2      {;}}            
   78   1      }
   79          
   80          /*******************************/
-  81          void WaitForEnable(void)        
-  82          {                                       
-  83   1      DataPort=0xff;          
+  81          void WaitForEnable(void)  
+  82          {         
+  83   1      DataPort=0xff;    
   84   1      LCM_RS=0;LCM_RW=1;_nop_();
   85   1      LCM_EN=1;_nop_();_nop_();
-  86   1      while(DataPort&0x80);   
-  87   1      LCM_EN=0;                               
-  88   1      }                                       
+  86   1      while(DataPort&0x80); 
+  87   1      LCM_EN=0;       
+  88   1      }         
   89          /*******************************/
-  90          void WriteCommandLCM(uchar CMD,uchar Attribc)
-  91          {                                       
-  92   1      if(Attribc)WaitForEnable();     
+  90          void WriteCommandLCM(uchar CMD,uchar Attribc)  //LCD写命令
+  91          {         
+  92   1      if(Attribc)WaitForEnable(); 
   93   1      LCM_RS=0;LCM_RW=0;_nop_();
-  94   1      DataPort=CMD;_nop_();   
+  94   1      DataPort=CMD;_nop_(); 
   95   1      LCM_EN=1;_nop_();_nop_();LCM_EN=0;
-  96   1      }                                       
+  96   1      }         
   97          /*******************************/
   98          void WriteDataLCM(uchar dataW)
-  99          {                                       
- 100   1      WaitForEnable();                
+  99          {         
+ 100   1      WaitForEnable();    
  101   1      LCM_RS=1;LCM_RW=0;_nop_();
  102   1      DataPort=dataW;_nop_(); 
  103   1      LCM_EN=1;_nop_();_nop_();LCM_EN=0;
- 104   1      }               
+ 104   1      }   
  105          /***********************************/
- 106          void InitLcd()                          
- 107          {                       
- 108   1      WriteCommandLCM(0x38,1);        
- 109   1      WriteCommandLCM(0x08,1);        
- 110   1      WriteCommandLCM(0x01,1);        
- 111   1      WriteCommandLCM(0x06,1);        
- 112   1      WriteCommandLCM(0x0c,1);
- 113   1      }                       
+ 106          void InitLcd()        
+ 107          {     
+ 108   1      WriteCommandLCM(0x38,1);  //设置16*2显示，5*7点阵，8位数据接口
+ 109   1      WriteCommandLCM(0x08,1);  //只开显示
+ 110   1      WriteCommandLCM(0x01,1);  //清屏
+ 111   1      WriteCommandLCM(0x06,1);  //地址加1，当写入数据的时候光标右移
+ 112   1      WriteCommandLCM(0x0c,1);  //不显示光标
+ 113   1      }     
  114          /***********************************/
  115          void DisplayOneChar(uchar X,uchar Y,uchar DData)
- 116          {                                               
- 117   1      Y&=1;                                           
-C51 COMPILER V9.02   STC_BH1750                                                            03/01/2020 12:22:30 PAGE 3   
+ 116          {           
+ 117   1      Y&=1;           
+C51 COMPILER V9.59.0.0   STC_BH1750                                                        03/08/2020 16:06:35 PAGE 3   
 
- 118   1      X&=15;                                          
- 119   1      if(Y)X|=0x40;                                   
- 120   1      X|=0x80;                        
- 121   1      WriteCommandLCM(X,0);           
- 122   1      WriteDataLCM(DData);            
- 123   1      }                                               
+ 118   1      X&=15;            
+ 119   1      if(Y)X|=0x40;         
+ 120   1      X|=0x80;      
+ 121   1      WriteCommandLCM(X,0);   
+ 122   1      WriteDataLCM(DData);    
+ 123   1      }           
  124          
  125          /**************************************
  126          延时5微秒(STC90C52RC@12M)
@@ -144,8 +144,8 @@ line level    source
  131          {
  132   1          _nop_();_nop_();_nop_();_nop_();
  133   1          _nop_();_nop_();_nop_();_nop_();
- 134   1              _nop_();_nop_();_nop_();_nop_();
- 135   1              _nop_();_nop_();_nop_();_nop_();
+ 134   1        _nop_();_nop_();_nop_();_nop_();
+ 135   1        _nop_();_nop_();_nop_();_nop_();
  136   1      }
  137          
  138          /**************************************
@@ -190,7 +190,7 @@ line level    source
  177          入口参数:ack (0:ACK 1:NAK)
  178          **************************************/
  179          void BH1750_SendACK(bit ack)
-C51 COMPILER V9.02   STC_BH1750                                                            03/01/2020 12:22:30 PAGE 4   
+C51 COMPILER V9.59.0.0   STC_BH1750                                                        03/08/2020 16:06:35 PAGE 4   
 
  180          {
  181   1          SDA = ack;                  //写应答信号
@@ -254,7 +254,7 @@ line level    source
  239   1          return dat;
  240   1      }
  241          
-C51 COMPILER V9.02   STC_BH1750                                                            03/01/2020 12:22:30 PAGE 5   
+C51 COMPILER V9.59.0.0   STC_BH1750                                                        03/08/2020 16:06:35 PAGE 5   
 
  242          //*********************************
  243          
@@ -277,8 +277,8 @@ line level    source
  260              BH1750_Start();                          //起始信号
  261              BH1750_SendByte(SlaveAddress+1);         //发送设备地址+读信号
  262              REG_data=BH1750_RecvByte();              //读出寄存器数据
- 263                  BH1750_SendACK(1);   
- 264                  BH1750_Stop();                           //停止信号
+ 263            BH1750_SendACK(1);   
+ 264            BH1750_Stop();                           //停止信号
  265              return REG_data; 
  266          }
  267          */
@@ -288,11 +288,11 @@ line level    source
  271          //
  272          //*********************************************************
  273          void Multiple_read_BH1750(void)
- 274          {   uchar i;    
+ 274          {   uchar i;  
  275   1          BH1750_Start();                          //起始信号
  276   1          BH1750_SendByte(SlaveAddress+1);         //发送设备地址+读信号
- 277   1              
- 278   1               for (i=0; i<3; i++)                      //连续读取2个地址数据，存储中BUF
+ 277   1        
+ 278   1         for (i=0; i<3; i++)                      //连续读取2个地址数据，存储中BUF
  279   1          {
  280   2              BUF[i] = BH1750_RecvByte();          //BUF[0]存储0x32地址中的数据
  281   2              if (i == 3)
@@ -301,7 +301,7 @@ line level    source
  284   3                 BH1750_SendACK(1);                //最后一个数据需要回NOACK
  285   3              }
  286   2              else
- 287   2              {               
+ 287   2              {   
  288   3                BH1750_SendACK(0);                //回应ACK
  289   3             }
  290   2         }
@@ -318,14 +318,14 @@ line level    source
  301   1      
  302   1      }
  303          //*********************************************************
-C51 COMPILER V9.02   STC_BH1750                                                            03/01/2020 12:22:30 PAGE 6   
+C51 COMPILER V9.59.0.0   STC_BH1750                                                        03/08/2020 16:06:35 PAGE 6   
 
  304          //主程序********
  305          //*********************************************************
  306          void main()
  307          {  
  308   1         float temp;
- 309   1         delay_nms(100);          //延时100ms 
+ 309   1         delay_nms(100);      //延时100ms 
  310   1         InitLcd();           //初始化LCD
  311   1         Init_BH1750();       //初始化BH1750
  312   1       
@@ -345,21 +345,21 @@ line level    source
  326   2          temp=(float)dis_data/1.2;
  327   2      
  328   2          conversion(temp);         //计算数据和显示
- 329   2              DisplayOneChar(0,0,'L'); 
- 330   2              DisplayOneChar(1,0,'i'); 
- 331   2              DisplayOneChar(2,0,'g'); 
- 332   2              DisplayOneChar(3,0,'h'); 
- 333   2              DisplayOneChar(4,0,'t'); 
+ 329   2        DisplayOneChar(0,0,'L'); 
+ 330   2        DisplayOneChar(1,0,'i'); 
+ 331   2        DisplayOneChar(2,0,'g'); 
+ 332   2        DisplayOneChar(3,0,'h'); 
+ 333   2        DisplayOneChar(4,0,'t'); 
  334   2          DisplayOneChar(5,0,':'); 
  335   2      
  336   2          DisplayOneChar(7,0,wan); //显示数据
  337   2          DisplayOneChar(8,0,qian);  
  338   2          DisplayOneChar(9,0,bai); 
  339   2          DisplayOneChar(10,0,shi); 
- 340   2              DisplayOneChar(11,0,ge); 
+ 340   2        DisplayOneChar(11,0,ge); 
  341   2      
- 342   2              DisplayOneChar(13,0,'l'); ////显示数单位
- 343   2              DisplayOneChar(14,0,'x');  
+ 342   2        DisplayOneChar(13,0,'l'); ////显示数单位
+ 343   2        DisplayOneChar(14,0,'x');  
  344   2                  
  345   2        }
  346   1      } 
@@ -367,7 +367,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    682    ----
+   CODE SIZE        =    710    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

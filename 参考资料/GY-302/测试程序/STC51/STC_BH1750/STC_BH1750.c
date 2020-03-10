@@ -87,7 +87,7 @@ while(DataPort&0x80);
 LCM_EN=0;				
 }					
 /*******************************/
-void WriteCommandLCM(uchar CMD,uchar Attribc)
+void WriteCommandLCM(uchar CMD,uchar Attribc)  //LCD写命令
 {					
 if(Attribc)WaitForEnable();	
 LCM_RS=0;LCM_RW=0;_nop_();
@@ -105,11 +105,11 @@ LCM_EN=1;_nop_();_nop_();LCM_EN=0;
 /***********************************/
 void InitLcd()				
 {			
-WriteCommandLCM(0x38,1);	
-WriteCommandLCM(0x08,1);	
-WriteCommandLCM(0x01,1);	
-WriteCommandLCM(0x06,1);	
-WriteCommandLCM(0x0c,1);
+WriteCommandLCM(0x38,1);	//设置16*2显示，5*7点阵，8位数据接口
+WriteCommandLCM(0x08,1);	//只开显示
+WriteCommandLCM(0x01,1);	//清屏
+WriteCommandLCM(0x06,1);	//地址加1，当写入数据的时候光标右移
+WriteCommandLCM(0x0c,1);  //不显示光标
 }			
 /***********************************/
 void DisplayOneChar(uchar X,uchar Y,uchar DData)
