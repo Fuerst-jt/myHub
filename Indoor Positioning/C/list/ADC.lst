@@ -1,0 +1,87 @@
+C51 COMPILER V9.59.0.0   ADC                                                               03/27/2020 22:57:47 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\list\ADC.obj
+COMPILER INVOKED BY: D:\XX\MDK\C51\BIN\C51.EXE ADC.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\ADC.lst) T
+                    -ABS(2) OBJECT(.\list\ADC.obj)
+
+line level    source
+
+   1          
+   2          /*---------------------------------------------------------------------*/
+   3          /* --- STC MCU International Limited ----------------------------------*/
+   4          /* --- STC 1T Series MCU Demo Programme -------------------------------*/
+   5          /* --- Mobile: (86)13922805190 ----------------------------------------*/
+   6          /* --- Fax: 86-0513-55012956,55012947,55012969 ------------------------*/
+   7          /* --- Tel: 86-0513-55012928,55012929,55012966 ------------------------*/
+   8          /* --- Web: www.GXWMCU.com --------------------------------------------*/
+   9          /* --- QQ:  800003751 -------------------------------------------------*/
+  10          /* 如果要在程序中使用此代码,请在程序中注明使用了宏晶科技的资料及程序   */
+  11          /*---------------------------------------------------------------------*/
+  12          
+  13          
+  14          /*************  本程序功能说明  **************
+  15          
+  16          读ADC测量外部电压，使用内部基准计算电压.
+  17          
+  18          用STC的MCU的IO方式控制74HC595驱动8位数码管。
+  19          
+  20          用户可以修改宏来选择时钟频率.
+  21          
+  22          用户可以在"用户定义宏"中选择共阴或共阳. 推荐尽量使用共阴数码管.
+  23          
+  24          使用Timer0的16位自动重装来产生1ms节拍,程序运行于这个节拍下, 用户修改MCU主时钟频率时,自动定时于1ms.
+  25          
+  26          右边4位数码管显示测量的电压值值.
+  27          
+  28          外部电压从板上测温电阻两端输入, 输入电压0~VDD, 不要超过VDD或低于0V. 
+  29          
+  30          实际项目使用请串一个1K的电阻到ADC输入口, ADC输入口再并一个电容到地.
+  31          
+  32          ******************************************/
+  33          
+  34          
+  35          #include  "adc.h"
+  36          
+  37          
+  38          
+  39          
+  40          //========================================================================
+  41          // 函数: u16  Get_ADC10bitResult(u8 channel)
+  42          // 描述: 查询法读一次ADC结果.
+  43          // 参数: channel: 选择要转换的ADC.
+  44          // 返回: 10位ADC结果.
+  45          // 版本: V1.0, 2012-10-22
+  46          //========================================================================
+  47          u16 Get_ADC10bitResult(u8 channel)  //channel = 0~7
+  48          {
+  49   1        ADC_RES = 0;
+  50   1        ADC_RESL = 0;
+  51   1      
+  52   1        ADC_CONTR = (ADC_CONTR & 0xe0) | 0x08 | channel;  //start the ADC
+  53   1        NOP(4);
+  54   1      
+C51 COMPILER V9.59.0.0   ADC                                                               03/27/2020 22:57:47 PAGE 2   
+
+  55   1        while((ADC_CONTR & 0x10) == 0)  ; //wait for ADC finish
+  56   1        ADC_CONTR &= ~0x10;   //清除ADC结束标志
+  57   1        return  (((u16)ADC_RES << 2) | (ADC_RESL & 3));
+  58   1      }
+  59          
+  60          
+  61          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     46    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

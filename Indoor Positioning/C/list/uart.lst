@@ -1,0 +1,123 @@
+C51 COMPILER V9.00   UART                                                                  09/06/2016 23:38:42 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN .\list\uart.obj
+COMPILER INVOKED BY: E:\2.DevelopSoft\Keil\C51\BIN\C51.EXE uart.c BROWSE DEBUG OBJECTEXTEND PRINT(.\list\uart.lst) OBJEC
+                    -T(.\list\uart.obj)
+
+line level    source
+
+   1          #include "uart.h"
+   2          #include<string.h>
+   3          
+   4          #define Uart1_Buf_Max 20               //串口数据缓存长度
+   5          u8 idata  Rec_Buf[Uart1_Buf_Max];  //串口数据缓存
+   6          u8 point1 = 0;             //绶存指针
+   7          
+   8          
+   9          void UartInit(void)             //9600bps@11.0592MHz
+  10          {
+  11   1      //注意: STC15W4K32S4系列的芯片,上电后所有与PWM相关的IO口均为
+  12   1      //      高阻态,需将这些口设置为准双向口或强推挽模式方可正常使用
+  13   1      //相关IO: P0.6/P0.7/P1.6/P1.7/P2.1/P2.2
+  14   1      //        P2.3/P2.7/P3.7/P4.2/P4.4/P4.5
+  15   1              P3M0 &= ~(1<<7);                //设置P3.7为推挽输出
+  16   1              P3M1 &= ~(1<<7);
+  17   1      
+  18   1              S1_USE_P36P37();
+  19   1      
+  20   1              PCON &= 0x7F;           //波特率不倍速
+  21   1              SCON = 0x50;            //8位数据,可变波特率
+  22   1              AUXR |= 0x40;           //定时器1时钟为Fosc,即1T
+  23   1              AUXR &= 0xFE;           //串口1选择定时器1为波特率发生器
+  24   1              TMOD &= 0x0F;           //清除定时器1模式位
+  25   1              TMOD |= 0x20;           //设定定时器1为8位自动重装方式
+  26   1              TL1 = 0xDC;             //设定定时初值
+  27   1              TH1 = 0xDC;             //设定定时器重装值
+  28   1              ET1 = 0;                //禁止定时器1中断
+  29   1              TR1 = 1;                //启动定时器1
+  30   1      
+  31   1              ES = 1;
+  32   1              EA = 1;
+  33   1      }
+  34          
+  35          /*----------------------------
+  36          发送串口数据
+  37          ----------------------------*/
+  38          void SendData(unsigned char ch)
+  39          {
+  40   1          SBUF = ch;                 //写数据到UART数据寄存器
+  41   1                      while(TI == 0);
+  42   1                      TI = 0;
+  43   1      }
+  44          
+  45          /*----------------------------
+  46          发送字符串
+  47          ----------------------------*/
+  48          void SendString(char *s)
+  49          {
+  50   1          while (*s)                  //检测字符串结束标志
+  51   1          {
+  52   2              SendData(*s++);         //发送当前字符
+  53   2          }
+  54   1      }
+C51 COMPILER V9.00   UART                                                                  09/06/2016 23:38:42 PAGE 2   
+
+  55          
+  56          bit Hand(unsigned char *a)                   // 串口命令识别函数
+  57          { 
+  58   1          if(strstr(Rec_Buf,a)!=NULL)
+  59   1                  return 1;
+  60   1              else
+  61   1                      return 0;
+  62   1      }
+  63          
+  64          void CLR_Buf(void)                           // 串口缓存清理
+  65          {
+  66   1              memset(Rec_Buf, 0, Uart1_Buf_Max);      //清空
+  67   1      
+  68   1          point1 = 0;                    
+  69   1      }
+  70          
+  71          void Usart() interrupt 4 using 1            // 串口中断函数
+  72          {
+  73   1              ES = 0;
+  74   1              if (RI)
+  75   1          {
+  76   2            RI = 0;                                //清除RI位
+  77   2                      Rec_Buf[point1] = SBUF; 
+  78   2      //              if (Rec_Buf[0] == 0xd9)
+  79   2      //                      {
+  80   2      //                              IAP_CONTR = 0x60;
+  81   2      //                      }
+  82   2                              
+  83   2                      point1++;               
+  84   2                      if(point1>=Uart1_Buf_Max)          
+  85   2                      {
+  86   3                              point1 = 0;
+  87   3                      }           
+  88   2      
+  89   2          }
+  90   1          if (TI)
+  91   1          {
+  92   2              TI = 0;                 //清除TI位
+  93   2      
+  94   2          }
+  95   1                      ES =  1;
+  96   1      }
+  97          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    186    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1       6
+   IDATA SIZE       =     20    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
