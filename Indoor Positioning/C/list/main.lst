@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   MAIN                                                              03/27/2020 22:57:47 PAGE 1   
+C51 COMPILER V9.59.0.0   MAIN                                                              04/24/2020 20:48:05 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
@@ -33,7 +33,7 @@ line level    source
   23          
   24          /*************  本地变量声明  **************/
   25          u8  i;
-  26          u16 j;
+  26          u16 j,text;
   27          u16 Bandgap;
   28          
   29          /*************  本地函数声明  **************/
@@ -62,7 +62,7 @@ line level    source
   52   1        init();
   53   1        GPIO_config();
   54   1      
-C51 COMPILER V9.59.0.0   MAIN                                                              03/27/2020 22:57:47 PAGE 2   
+C51 COMPILER V9.59.0.0   MAIN                                                              04/24/2020 20:48:05 PAGE 2   
 
   55   1        Init_LCD1602();
   56   1        LCD1602_write_com(0x80);    //指针指向第1行第0个位置
@@ -109,61 +109,64 @@ line level    source
   97   2          LCD1602_write_data(j/100 + 0x30); //显示百位
   98   2          LCD1602_write_data(j%100/10 + 0x30);//显示十位
   99   2          LCD1602_write_data(j%10 + 0x30);  //显示个位
- 100   2          
- 101   2        
- 102   2        }
- 103   1      }
- 104          
- 105          void Led_flash() interrupt 1
- 106          {
- 107   1        TH0 = (65536 - 10000) / 256;
- 108   1        TL0 = (65535 - 10000) % 256;
- 109   1        temp = _crol_(temp,1);
- 110   1        if(temp == 0x08)
- 111   1          temp = 0x01;
- 112   1        P1 = temp;
- 113   1        LED = ~LED;
- 114   1      }
- 115          
- 116          void init()
-C51 COMPILER V9.59.0.0   MAIN                                                              03/27/2020 22:57:47 PAGE 3   
+ 100   2          delay_ms(1000);
+ 101   2        }
+ 102   1      }
+ 103          
+ 104          void Led_flash() interrupt 1
+ 105          {
+ 106   1        TH0 = (65536 - 10000) / 256;
+ 107   1        TL0 = (65535 - 10000) % 256;
+ 108   1        text++;
+ 109   1        if(text >= 50)
+ 110   1        {
+ 111   2          text = 0;
+ 112   2        temp = _crol_(temp,1);
+ 113   2        if(temp == 0x08)
+ 114   2          temp = 0x01;
+ 115   2        P1 = temp;
+ 116   2        }
+C51 COMPILER V9.59.0.0   MAIN                                                              04/24/2020 20:48:05 PAGE 3   
 
- 117          {
- 118   1        P0M1 = 0; P0M0 = 0; //设置为准双向口
- 119   1        P1M1 = 0; P1M0 = 0; //设置为准双向口
- 120   1        P2M1 = 0; P2M0 = 0; //设置为准双向口
- 121   1        P3M1 = 0; P3M0 = 0; //设置为准双向口
- 122   1        P4M1 = 0; P4M0 = 0; //设置为准双向口
- 123   1        P5M1 = 0; P5M0 = 0; //设置为准双向口
- 124   1        P6M1 = 0; P6M0 = 0; //设置为准双向口
- 125   1        P7M1 = 0; P7M0 = 0; //设置为准双向口
- 126   1        P1M1 |= (1<<3);   // 把ADC口设置为高阻输入
- 127   1        P1M0 &= ~(1<<3);
- 128   1        P1ASF = (1<<3);   //P1.3做ADC
- 129   1        ADC_CONTR = 0xE0; //90T, ADC power on
- 130   1        
- 131   1        AUXR = 0x00;
- 132   1        TMOD = 0x01;
- 133   1        TH0 = (65536 - 10000) / 256;
- 134   1        TL0 = (65535 - 10000) % 256;
- 135   1        EA = 1;
- 136   1        ET0 = 1;
- 137   1        TR0 = 1;
- 138   1        temp = 0x01;
- 139   1        LED = LED_OFF;
- 140   1      }
- 141          
- 142          
- 143          
+ 117   1      }
+ 118          
+ 119          void init()
+ 120          {
+ 121   1        P0M1 = 0; P0M0 = 0; //设置为准双向口
+ 122   1        P1M1 = 0; P1M0 = 0; //设置为准双向口
+ 123   1        P2M1 = 0; P2M0 = 0; //设置为准双向口
+ 124   1        P3M1 = 0; P3M0 = 0; //设置为准双向口
+ 125   1        P4M1 = 0; P4M0 = 0; //设置为准双向口
+ 126   1        P5M1 = 0; P5M0 = 0; //设置为准双向口
+ 127   1        P6M1 = 0; P6M0 = 0; //设置为准双向口
+ 128   1        P7M1 = 0; P7M0 = 0; //设置为准双向口
+ 129   1        P1M1 |= (1<<3);   // 把ADC口设置为高阻输入
+ 130   1        P1M0 &= ~(1<<3);
+ 131   1        P1ASF = (1<<3);   //P1.3做ADC
+ 132   1        ADC_CONTR = 0xE0; //90T, ADC power on
+ 133   1        
+ 134   1        AUXR = 0x00;
+ 135   1        TMOD = 0x01;
+ 136   1        TH0 = (65536 - 10000) / 256;
+ 137   1        TL0 = (65535 - 10000) % 256;
+ 138   1        EA = 1;
+ 139   1        ET0 = 1;
+ 140   1        TR0 = 1;
+ 141   1        temp = 0x01;
+ 142   1        text = 0;
+ 143   1      }
  144          
+ 145          
+ 146          
+ 147          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    304    ----
+   CODE SIZE        =    332    ----
    CONSTANT SIZE    =     28    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      6    ----
+   DATA SIZE        =      8    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

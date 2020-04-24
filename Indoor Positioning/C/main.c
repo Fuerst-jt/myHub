@@ -23,7 +23,7 @@
 
 /*************	本地变量声明	**************/
 u8	i;
-u16	j;
+u16	j,text;
 u16	Bandgap;
 
 /*************	本地函数声明	**************/
@@ -97,8 +97,7 @@ void main(void)
 		LCD1602_write_data(j/100 + 0x30);	//显示百位
 		LCD1602_write_data(j%100/10 + 0x30);//显示十位
 		LCD1602_write_data(j%10 + 0x30);	//显示个位
-		
-	
+		delay_ms(1000);
 	}
 }
 
@@ -106,11 +105,15 @@ void Led_flash() interrupt 1
 {
 	TH0 = (65536 - 10000) / 256;
 	TL0 = (65535 - 10000) % 256;
+	text++;
+	if(text >= 50)
+	{
+		text = 0;
 	temp = _crol_(temp,1);
 	if(temp == 0x08)
 		temp = 0x01;
 	P1 = temp;
-	LED = ~LED;
+	}
 }
 
 void init()
@@ -136,7 +139,7 @@ void init()
 	ET0 = 1;
 	TR0 = 1;
 	temp = 0x01;
-	LED = LED_OFF;
+	text = 0;
 }
 
 
