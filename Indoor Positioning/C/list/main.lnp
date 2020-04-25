@@ -1,6 +1,7 @@
 ".\list\main.obj",
 ".\list\delay.obj",
 ".\list\LCD1602.obj",
-".\list\ADC.obj" 
+".\list\ADC.obj",
+".\list\collect.obj" 
 TO ".\list\main" 
 PRINT(".\list\main.m51") RAMSIZE(256) 

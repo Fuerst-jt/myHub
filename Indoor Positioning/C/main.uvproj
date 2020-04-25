@@ -396,6 +396,11 @@
               <FileType>1</FileType>
               <FilePath>.\ADC.c</FilePath>
             </File>
+            <File>
+              <FileName>collect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\collect.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

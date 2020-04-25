@@ -10,6 +10,7 @@
 #include "lcd1602.h"
 #include "led.h"
 #include "adc.h"
+#include "collect.h"
 
 /*************	功能说明	**************
 
@@ -22,9 +23,8 @@
 
 
 /*************	本地变量声明	**************/
-u8	i;
-u16	j,text;
-u16	Bandgap;
+u16	text,RSS_data[3],m,n;
+
 
 /*************	本地函数声明	**************/
 
@@ -54,50 +54,18 @@ void main(void)
 
 	Init_LCD1602();
 	LCD1602_write_com(0x80);		//指针指向第1行第0个位置
-	LCD1602_write_word("Welcome to use!");
-
-	LCD1602_write_com(0x80+0x40);	//指针指向第2行第0个位置
 	LCD1602_write_word("HelloWorld!");
-
 	delay_ms(200);
-	
 	while(1)
 	{
-		
-		#if (Cal_MODE == 0)
-			//=================== 只读1次ADC, 10bit ADC. 分辨率0.01V ===============================
-				P1ASF = 0;
-				Get_ADC10bitResult(0);	//改变P1ASF后先读一次并丢弃结果, 让内部的采样电容的电压等于输入值.
-				Bandgap = Get_ADC10bitResult(0);	//读内部基准ADC, P1ASF=0, 读0通道
-				P1ASF = 1<<3;
-				j = Get_ADC10bitResult(3);	//读外部电压ADC
-				j = (u16)((u32)j * 123 / Bandgap);	//计算外部电压, Bandgap为1.23V, 测电压分辨率0.01V
-			#endif
-			//==========================================================================
-
-			//===== 连续读16次ADC 再平均计算. 分辨率0.01V =========
-			#if (Cal_MODE == 1)
-				P1ASF = 0;
-				Get_ADC10bitResult(0);	//改变P1ASF后先读一次并丢弃结果, 让内部的采样电容的电压等于输入值.
-				for(j=0, i=0; i<16; i++)
-				{
-					j += Get_ADC10bitResult(0);	//读内部基准ADC, P1ASF=0, 读0通道
-				}
-				Bandgap = j >> 4;	//16次平均
-				P1ASF = ADC_P13;
-				for(j=0, i=0; i<16; i++)
-				{
-					j += Get_ADC10bitResult(3);	//读外部电压ADC
-				}
-				j = j >> 4;	//16次平均
-				j = (u16)((u32)j * 123 / Bandgap);	//计算外部电压, Bandgap为1.23V, 测电压分辨率0.01V
-			#endif
-
-		LCD1602_write_com(0x80+0x40+13);  //指针指向第2行第13个位置
-		LCD1602_write_data(j/100 + 0x30);	//显示百位
-		LCD1602_write_data(j%100/10 + 0x30);//显示十位
-		LCD1602_write_data(j%10 + 0x30);	//显示个位
-		delay_ms(1000);
+		for(n = 0 ; n < 3 ; n++)
+		{
+			LCD1602_write_com(0x80+0x40+(4*n));  //指针指向第2行第13个位置
+			LCD1602_write_data((RSS_data[n])/100 + 0x30);	//显示百位
+			LCD1602_write_data((RSS_data[n])%100/10 + 0x30);//显示十位
+			LCD1602_write_data((RSS_data[n])%10 + 0x30);	//显示个位
+			delay_ms(1000);
+		}
 	}
 }
 
@@ -109,11 +77,18 @@ void Led_flash() interrupt 1
 	if(text >= 50)
 	{
 		text = 0;
-	temp = _crol_(temp,1);
-	if(temp == 0x08)
-		temp = 0x01;
-	P1 = temp;
+		temp = _crol_(temp,1);
+		if(temp == 0x08)
+			temp = 0x01;
+		P1 = temp;
+	
+		for(m = 0 ; m < 3 ; m++)
+		{
+			RSS_data[m] = coll_data_1();
+		}
+	
 	}
+	
 }
 
 void init()
