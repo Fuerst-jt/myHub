@@ -71,24 +71,17 @@ void main(void)
 
 void Led_flash() interrupt 1
 {
-	TH0 = (65536 - 10000) / 256;
-	TL0 = (65535 - 10000) % 256;
-	text++;
-	if(text >= 50)
-	{
-		text = 0;
-		temp = _crol_(temp,1);
-		if(temp == 0x08)
-			temp = 0x01;
-		P1 = temp;
-	
-		for(m = 0 ; m < 3 ; m++)
-		{
-			RSS_data[m] = coll_data_1();
-		}
-	
-	}
-	
+	TH0 = (65536 - 3400) / 256;
+	TL0 = (65535 - 3400) % 256;
+	temp = _crol_(temp,1);
+	if(temp == 0x08)
+		temp = 0x01;
+	P0 = temp;
+
+	RSS_data[m] = coll_data_1();
+	m++;
+	if(m >= 3)
+		m = 0;
 }
 
 void init()
@@ -108,13 +101,14 @@ void init()
 	
 	AUXR = 0x00;
 	TMOD = 0x01;
-	TH0 = (65536 - 10000) / 256;
-	TL0 = (65535 - 10000) % 256;
+	TH0 = (65536 - 3400) / 256;
+	TL0 = (65535 - 3400) % 256;
 	EA = 1;
 	ET0 = 1;
 	TR0 = 1;
 	temp = 0x01;
 	text = 0;
+	m = 0;
 }
 
 
