@@ -1,10 +1,10 @@
-C51 COMPILER V9.59.0.0   LCD1602                                                           04/27/2020 15:31:19 PAGE 1   
+C51 COMPILER V9.59.0.0   LCD1602                                                           06/15/2020 00:05:00 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE LCD1602
 OBJECT MODULE PLACED IN .\list\LCD1602.obj
-COMPILER INVOKED BY: D:\XX\MDK\C51\BIN\C51.EXE LCD1602.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\list\LCD160
-                    -2.lst) TABS(2) OBJECT(.\list\LCD1602.obj)
+COMPILER INVOKED BY: D:\XX\MDK\C51\BIN\C51.EXE LCD1602.c COMPACT OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\lis
+                    -t\LCD1602.lst) TABS(2) OBJECT(.\list\LCD1602.obj)
 
 line level    source
 
@@ -46,28 +46,28 @@ line level    source
   36          //****************************************************
   37          void LCD1602_write_data(unsigned char dat)
   38          {
-  39   1        LCD1602_RS = 1;
+  39   1        LCD1602_RS = 1;           //输入为数据
   40   1        delay_ms(1);  
-  41   1        LCD1602_PORT = dat;
-  42   1        LCD1602_EN = 1;
+  41   1        LCD1602_PORT = dat;       //从端口读取数据
+  42   1        LCD1602_EN = 1;           //输入上升沿
   43   1        delay_ms(1);
-  44   1        LCD1602_EN = 0;
+  44   1        LCD1602_EN = 0;           //输入下降沿
   45   1      }
   46          
   47          //****************************************************
   48          //连续写字符
   49          //****************************************************
-  50          void LCD1602_write_word(unsigned char *s)
+  50          /*void LCD1602_write_word(unsigned char *s)
   51          {
-  52   1        while(*s>0)
-  53   1        {
-  54   2          LCD1602_write_data(*s);
-C51 COMPILER V9.59.0.0   LCD1602                                                           04/27/2020 15:31:19 PAGE 2   
+  52            while(*s>0)
+  53            {
+  54              LCD1602_write_data(*s);
+C51 COMPILER V9.59.0.0   LCD1602                                                           06/15/2020 00:05:00 PAGE 2   
 
-  55   2          s++;
-  56   2        }
-  57   1      }
-  58          
+  55              s++;
+  56            }
+  57          }
+  58          */
   59          void Init_LCD1602()
   60          {
   61   1        LCD1602_GPIO_config();
@@ -86,11 +86,11 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    145    ----
+   CODE SIZE        =    111    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
-   PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       5
+   PDATA SIZE       =   ----       2
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

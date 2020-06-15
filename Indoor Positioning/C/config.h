@@ -27,9 +27,8 @@
 /*********************************************************/
 
 #include	"STC15.H"
+#include <intrins.h>
 
-#define	Cal_MODE 	0	//每次测量只读1次ADC. 分辨率0.01V
-//	#define	Cal_MODE 	1	//每次测量连续读16次ADC 再平均计算. 分辨率0.01V
 
 typedef 	unsigned char	u8;
 typedef 	unsigned int	u16;

@@ -36,18 +36,18 @@ void LCD1602_write_com(unsigned char com)
 //****************************************************
 void LCD1602_write_data(unsigned char dat)
 {
-	LCD1602_RS = 1;
+	LCD1602_RS = 1;           //输入为数据
 	delay_ms(1);	
-	LCD1602_PORT = dat;
-	LCD1602_EN = 1;
+	LCD1602_PORT = dat;       //从端口读取数据
+	LCD1602_EN = 1;           //输入上升沿
 	delay_ms(1);
-	LCD1602_EN = 0;
+	LCD1602_EN = 0;           //输入下降沿
 }
 
 //****************************************************
 //连续写字符
 //****************************************************
-void LCD1602_write_word(unsigned char *s)
+/*void LCD1602_write_word(unsigned char *s)
 {
 	while(*s>0)
 	{
@@ -55,7 +55,7 @@ void LCD1602_write_word(unsigned char *s)
 		s++;
 	}
 }
-
+*/
 void Init_LCD1602()
 {
 	LCD1602_GPIO_config();

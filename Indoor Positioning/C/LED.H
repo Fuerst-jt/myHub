@@ -6,6 +6,6 @@
 unsigned char temp;
 
 void init();
-void Led_flash();
+//void Led_flash();
 
 #endif
